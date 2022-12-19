@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="size_1dp">1px</dimen>
+    <dimen name="size_2dp">2px</dimen>
+    <dimen name="size_3dp">3px</dimen>
+    <dimen name="size_5dp">5px</dimen>
+    <dimen name="size_7dp">7px</dimen>
+    <dimen name="size_10dp">10px</dimen>
+    <dimen name="size_11dp">11px</dimen>
+    <dimen name="size_12dp">12px</dimen>
+    <dimen name="size_13dp">13px</dimen>
+    <dimen name="size_15dp">15px</dimen>
+    <dimen name="size_17dp">17px</dimen>
+    <dimen name="size_20dp">20px</dimen>
+    <dimen name="size_25dp">25px</dimen>
+    <dimen name="size_30dp">30px</dimen>
+    <dimen name="size_35dp">35px</dimen>
+    <dimen name="size_40dp">40px</dimen>
+    <dimen name="size_45dp">45px</dimen>
+    <dimen name="size_50dp">50px</dimen>
+    <dimen name="size_55dp">55px</dimen>
+    <dimen name="size_60dp">60px</dimen>
+    <dimen name="size_70dp">70px</dimen>
+    <dimen name="size_80dp">80px</dimen>
+    <dimen name="size_85dp">85px</dimen>
+    <dimen name="size_100dp">100px</dimen>
+    <dimen name="size_130dp">130px</dimen>
+    <dimen name="size_170dp">170px</dimen>
+    <dimen name="size_180dp">180px</dimen>
+    <dimen name="size_200dp">200px</dimen>
+    <dimen name="size_220dp">220px</dimen>
+    <dimen name="size_250dp">250px</dimen>
+    <dimen name="size_300dp">300px</dimen>
+    <dimen name="size_500dp">500px</dimen>
+</resources>

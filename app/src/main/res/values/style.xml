@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="tablayout" parent="@android:style/TextAppearance.Widget.TabWidget">
+        <item name="android:fontFamily">@font/main_font</item>
+        <item name="android:textSize">12dp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="CustomNumberPicker" parent="@style/Theme.Design.NoActionBar">
+        <item name="android:fontFamily">@font/main_font</item>
+        <item name="android:textSize">20dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColorPrimary">#000000</item>
+        <item name="colorControlNormal">@android:color/transparent</item>
+    </style>
+
+    <style name="dialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:background">#ffffff</item>
+    </style>
+</resources>

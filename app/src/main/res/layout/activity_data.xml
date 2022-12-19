@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".Data">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_50dp">
+
+        <android.widget.Button
+            android:id="@+id/homeBTN"
+            android:layout_width="@dimen/size_25dp"
+            android:layout_height="@dimen/size_25dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/size_15dp"
+            android:background="@drawable/backhome" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/size_10dp"
+            android:layout_toRightOf="@+id/homeBTN"
+            android:fontFamily="@font/main_font"
+            android:text="환경 데이터"
+            android:textColor="#000000"
+            android:textSize="@dimen/size_17dp" />
+
+        <android.widget.Button
+            android:id="@+id/menuBTN"
+            android:layout_width="@dimen/size_25dp"
+            android:layout_height="@dimen/size_25dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/size_15dp"
+            android:background="@drawable/data_detail" />
+    </RelativeLayout>
+    <FrameLayout
+        android:id="@+id/dataFrame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+</LinearLayout>

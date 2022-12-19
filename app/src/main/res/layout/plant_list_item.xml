@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/size_50dp"
+    android:background="@drawable/home_list_layout_selector">
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/main_font"
+        android:layout_centerInParent="true"
+        android:text="AJPlants"
+        android:textColor="#ffffff"
+        android:textSize="@dimen/size_15dp"
+        android:textStyle="bold" />
+
+    <android.widget.Button
+        android:id="@+id/infoBTN"
+        android:layout_width="@dimen/size_25dp"
+        android:layout_height="@dimen/size_25dp"
+        android:layout_marginRight="@dimen/size_10dp"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/editBTN"
+        android:background="@drawable/home_info"/>
+
+    <android.widget.Button
+        android:id="@+id/editBTN"
+        android:layout_width="@dimen/size_25dp"
+        android:layout_height="@dimen/size_25dp"
+        android:layout_marginRight="@dimen/size_15dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/home_edit"/>
+
+
+</RelativeLayout>

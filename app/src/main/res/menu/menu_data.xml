@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/temp"
+        android:title="온 도" />
+    <item
+        android:id="@+id/humi"
+        android:title="습 도"/>
+    <item
+        android:id="@+id/illu"
+        android:title="조 도"/>
+</menu>

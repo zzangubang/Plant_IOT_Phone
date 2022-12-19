@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/size_300dp"
+    android:layout_height="@dimen/size_130dp"
+    android:orientation="vertical"
+    android:background="@drawable/dialog_layout">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="horizontal">
+        <EditText
+            android:id="@+id/modelEdit"
+            android:layout_width="@dimen/size_220dp"
+            android:layout_height="wrap_content"
+            android:hint="추가할 모델명을 입력하세요"
+            android:textColorHint="#888888"
+            android:textSize="@dimen/size_15dp"
+            android:textColor="#000000"
+            android:fontFamily="@font/main_font"
+            android:background="@drawable/dialog_edit"/>
+        <android.widget.Button
+            android:id="@+id/modelEditNull"
+            android:layout_width="@dimen/size_25dp"
+            android:layout_height="@dimen/size_25dp"
+            android:layout_marginLeft="@dimen/size_5dp"
+            android:background="@drawable/dialog_edit_null"/>
+
+    </LinearLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="2">
+
+        <android.widget.Button
+            android:id="@+id/cancelBTN"
+            android:layout_width="@dimen/size_80dp"
+            android:layout_height="@dimen/size_35dp"
+            android:layout_marginRight="@dimen/size_10dp"
+            android:text="Cancel"
+            android:textSize="@dimen/size_15dp"
+            android:textColor="#000000"
+            android:fontFamily="@font/main_font"
+            android:background="@drawable/dialog_btn_selector"
+            android:layout_toLeftOf="@+id/addBTN"
+            android:stateListAnimator="@null"
+            android:textAllCaps="false"/>
+
+        <android.widget.Button
+            android:id="@+id/addBTN"
+            android:layout_width="@dimen/size_50dp"
+            android:layout_height="@dimen/size_35dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/size_15dp"
+            android:text="Add"
+            android:textSize="@dimen/size_15dp"
+            android:textColor="#000000"
+            android:fontFamily="@font/main_font"
+            android:background="@drawable/dialog_btn_selector"
+            android:stateListAnimator="@null"
+            android:textAllCaps="false"/>
+
+    </RelativeLayout>
+
+</LinearLayout>
