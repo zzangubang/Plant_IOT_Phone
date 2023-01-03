@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".InformSetting">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_50dp">
+
+        <android.widget.Button
+            android:id="@+id/homeBTN"
+            android:layout_width="@dimen/size_25dp"
+            android:layout_height="@dimen/size_25dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/size_15dp"
+            android:background="@drawable/backhome" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/size_10dp"
+            android:layout_toRightOf="@+id/homeBTN"
+            android:fontFamily="@font/main_font"
+            android:text="비밀번호 변경"
+            android:textColor="#000000"
+            android:textSize="@dimen/size_17dp" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/size_30dp"
+        android:layout_marginRight="@dimen/size_30dp"
+        android:layout_marginTop="@dimen/size_20dp"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="현재 비밀번호"
+            android:textSize="@dimen/size_13dp"
+            android:textColor="#000000"
+            android:fontFamily="@font/main_font"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_40dp"
+            android:orientation="horizontal"
+            android:background="@drawable/info_edit_layout">
+
+            <EditText
+                android:id="@+id/nowPassEdit"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/size_10dp"
+                android:layout_marginRight="@dimen/size_10dp"
+                android:layout_marginTop="@dimen/size_1dp"
+                android:layout_marginBottom="@dimen/size_1dp"
+                android:background="@drawable/info_edit"
+                android:textSize="@dimen/size_15dp"
+                android:fontFamily="@font/main_font"
+                android:inputType="textPassword"
+                android:maxLength="30"
+                android:layout_toLeftOf="@+id/nowPassNull"/>
+            <ImageView
+                android:id="@+id/nowPassNull"
+                android:layout_width="@dimen/size_25dp"
+                android:layout_height="@dimen/size_25dp"
+                android:layout_marginRight="@dimen/size_10dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"/>
+
+        </RelativeLayout>
+        <TextView
+            android:id="@+id/nowWrongT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="#910011"
+            android:textSize="@dimen/size_12dp"
+            android:fontFamily="@font/main_font"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_7dp"
+            android:text="변경할 비밀번호"
+            android:textSize="@dimen/size_13dp"
+            android:textColor="#000000"
+            android:fontFamily="@font/main_font"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_40dp"
+            android:orientation="horizontal"
+            android:background="@drawable/info_edit_layout">
+
+            <EditText
+                android:id="@+id/revisePassEdit"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/size_10dp"
+                android:layout_marginRight="@dimen/size_10dp"
+                android:layout_marginTop="@dimen/size_1dp"
+                android:layout_marginBottom="@dimen/size_1dp"
+                android:hint="최대 30자까지 입력 가능합니다"
+                android:background="@drawable/info_edit"
+                android:textSize="@dimen/size_15dp"
+                android:fontFamily="@font/main_font"
+                android:inputType="textPassword"
+                android:maxLength="30"
+                android:layout_toLeftOf="@+id/revisePassNull"/>
+            <ImageView
+                android:id="@+id/revisePassNull"
+                android:layout_width="@dimen/size_25dp"
+                android:layout_height="@dimen/size_25dp"
+                android:layout_marginRight="@dimen/size_10dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"/>
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_3dp"
+            android:text="변경할 비밀번호 확인"
+            android:textSize="@dimen/size_13dp"
+            android:textColor="#000000"
+            android:fontFamily="@font/main_font"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_40dp"
+            android:orientation="horizontal"
+            android:background="@drawable/info_edit_layout">
+
+            <EditText
+                android:id="@+id/revisePassCheckEdit"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/size_10dp"
+                android:layout_marginTop="@dimen/size_1dp"
+                android:layout_marginRight="@dimen/size_10dp"
+                android:layout_marginBottom="@dimen/size_1dp"
+                android:layout_toLeftOf="@+id/revisePassCheckNull"
+                android:background="@drawable/info_edit"
+                android:fontFamily="@font/main_font"
+                android:hint="최대 30자까지 입력 가능합니다"
+                android:inputType="textPassword"
+                android:maxLength="30"
+                android:textSize="@dimen/size_15dp" />
+
+            <ImageView
+                android:id="@+id/revisePassCheckNull"
+                android:layout_width="@dimen/size_25dp"
+                android:layout_height="@dimen/size_25dp"
+                android:layout_marginRight="@dimen/size_10dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"/>
+
+        </RelativeLayout>
+        <TextView
+            android:id="@+id/reviseWrongT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="#910011"
+            android:textSize="@dimen/size_12dp"
+            android:fontFamily="@font/main_font"/>
+        <android.widget.Button
+            android:id="@+id/reviseBTN"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_40dp"
+            android:layout_marginTop="@dimen/size_5dp"
+            android:text="변경하기"
+            android:textSize="@dimen/size_13dp"
+            android:textStyle="bold"
+            android:textColor="#ffffff"
+            android:fontFamily="@font/main_font"
+            android:background="@drawable/info_btn_selector"/>
+    </LinearLayout>
+
+</LinearLayout>

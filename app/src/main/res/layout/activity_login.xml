@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#84A56C"
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:context=".LoginActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/size_30dp"
+        android:layout_marginRight="@dimen/size_30dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/main_font"
+            android:text="AJPLANTs"
+            android:textColor="#000000"
+            android:textSize="@dimen/size_25dp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_15dp"
+            android:background="@drawable/login_layout"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/size_5dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/idImage"
+                    android:layout_width="@dimen/size_25dp"
+                    android:layout_height="@dimen/size_25dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="@dimen/size_5dp"
+                    android:src="@drawable/login_id_image" />
+
+                <EditText
+                    android:id="@+id/idEdit"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/size_45dp"
+                    android:layout_marginLeft="@dimen/size_10dp"
+                    android:layout_marginRight="@dimen/size_10dp"
+                    android:layout_toLeftOf="@+id/idEdit_null"
+                    android:layout_toRightOf="@+id/idImage"
+                    android:background="@drawable/login_edit_layout"
+                    android:hint="아이디"
+                    android:inputType="text"
+                    android:maxLength="20"
+                    android:textColor="#000000"
+                    android:textSize="@dimen/size_15dp" />
+
+                <ImageView
+                    android:id="@+id/idEdit_null"
+                    android:layout_width="@dimen/size_25dp"
+                    android:layout_height="@dimen/size_25dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/size_5dp" />
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="#BDBDBD" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/size_5dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/passImage"
+                    android:layout_width="@dimen/size_25dp"
+                    android:layout_height="@dimen/size_25dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="@dimen/size_5dp"
+                    android:src="@drawable/login_pass_image" />
+
+                <EditText
+                    android:id="@+id/passEdit"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/size_45dp"
+                    android:layout_marginLeft="@dimen/size_10dp"
+                    android:layout_marginRight="@dimen/size_10dp"
+                    android:layout_toLeftOf="@+id/passEdit_null"
+                    android:layout_toRightOf="@+id/passImage"
+                    android:background="@drawable/login_edit_layout"
+                    android:hint="비밀번호"
+                    android:inputType="textPassword"
+                    android:maxLength="30"
+                    android:textColor="#000000"
+                    android:textSize="@dimen/size_15dp" />
+
+                <ImageView
+                    android:id="@+id/passEdit_null"
+                    android:layout_width="@dimen/size_25dp"
+                    android:layout_height="@dimen/size_25dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/size_5dp" />
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/editWrongT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/size_3dp"
+            android:layout_marginTop="@dimen/size_5dp"
+            android:fontFamily="@font/main_font"
+            android:text="초기 비밀번호는 1234 입니다."
+            android:textSize="@dimen/size_12dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_10dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <android.widget.Button
+                android:id="@+id/loginBTN"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_40dp"
+                android:layout_marginTop="@dimen/size_7dp"
+                android:background="@drawable/login_btn_selector"
+                android:fontFamily="@font/main_font"
+                android:text="로그인"
+                android:textColor="#FAFAFA"
+                android:textSize="@dimen/size_15dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>
