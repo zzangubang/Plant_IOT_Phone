@@ -1,6 +1,7 @@
 package com.example.plant_iot_phone;
 
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -8,40 +9,51 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 
 public class HomeActivity extends AppCompatActivity {
-    Button addList;
-
-    //RecyclerView.
-    RecyclerView plantList;
+    //ListView.
+    ListView plantList;
     PlantListAdapter plantListAdapter;
-    LinearLayoutManager linearLayoutManager;
-    ArrayList<PlantListItem> mArrayList;
-    ItemTouchHelper mItemTouchHelper;
-
+    ArrayList<PlantListItem> plantListItems;
 
     // 리스트 아이템 유지.
-    public SharedPreferences sharedPreferences;
-    public SharedPreferences.Editor editor;
-    ArrayList<String> getModel, getName, getNoti;
-    JSONArray modelJSON, nameJSON, notiJSON;
+    String getListURL = "http://aj3dlab.dothome.co.kr/Plant_plantlistG_Android.php";
+    GetList gList;
 
+    // 로그아웃.
+    Button logoutBTN;
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
+
+    // 비밀번호 설정
+    Button settingBTN;
+
+    String id = "";
     Toast toast;
     public static Context mContext;
-    MyService MyService;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -50,13 +62,14 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         mContext = this;
 
+        Intent getIntent = getIntent();
+        id = getIntent.getStringExtra("id");
+
         startService(new Intent(this, ForcedTerminationService.class));
         Intent intent = new Intent(this, MyService.class);
-        stopService(intent);
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(intent);
-        }
-        else {
+        } else {
             startService(intent);
         }
 
@@ -78,217 +91,159 @@ public class HomeActivity extends AppCompatActivity {
                     1);
         }
 
-        addList = (Button) findViewById(R.id.addList);
-        addList.setOnClickListener(new View.OnClickListener() {
+        // ListView.
+        plantList = (ListView) findViewById(R.id.plantList);
+        plantListItems = new ArrayList<PlantListItem>();
+        plantListAdapter = new PlantListAdapter(this, plantListItems);
+        plantList.setAdapter(plantListAdapter);
+        plantList.setOnItemClickListener(new plantListItemClickListener());
+        gList = new GetList();
+        gList.execute(getListURL);
+
+        // 로그아웃.
+        sharedPreferences = getSharedPreferences("PlantUser", MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+        logoutBTN = (Button) findViewById(R.id.logoutBTN);
+        logoutBTN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int status = NetworkStatus.getConnectivityStatus(getApplicationContext());
-                if (status == NetworkStatus.TYPE_NOT_CONNECTED) {
-                    toastShow("데이터 연결을 해주세요");
-                } else {
-                    Intent intent = new Intent(getApplicationContext(), PlantListAdd.class);
-                    startActivityForResult(intent, 1);
-                }
+                AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
+                builder.setMessage("로그아웃 하시겠습니까?");
+                builder.setPositiveButton("네", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        editor.putString("id", "");
+                        editor.putString("pass", "");
+                        editor.putString("login", "");
+                        editor.commit();
+                        stopService(new Intent(getApplicationContext(), MyService.class));
+                        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                });
+                builder.setNegativeButton("아니요", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
             }
         });
 
-
-        // 리스트 유지.
-        sharedPreferences = getSharedPreferences("PlantInform", MODE_PRIVATE);
-        editor = sharedPreferences.edit();
-        getModel = new ArrayList<String>();
-        getName = new ArrayList<String>();
-        getNoti = new ArrayList<String>();
-        modelJSON = new JSONArray();
-        nameJSON = new JSONArray();
-        notiJSON = new JSONArray();
-
-        String jsonModel = sharedPreferences.getString("model", null);
-        if (jsonModel != null) {
-            try {
-                modelJSON = new JSONArray(jsonModel);
-                for (int i = 0; i < modelJSON.length(); i++) {
-                    String modelJ = modelJSON.optString(i);
-                    getModel.add(modelJ);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        String jsonName = sharedPreferences.getString("name", null);
-        if (jsonName != null) {
-            try {
-                nameJSON = new JSONArray(jsonName);
-                for (int i = 0; i < nameJSON.length(); i++) {
-                    String nameJ = nameJSON.optString(i);
-                    getName.add(nameJ);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        String jsonNoti = sharedPreferences.getString("noti", null);
-        if (jsonNoti != null) {
-            try {
-                notiJSON = new JSONArray(jsonNoti);
-                for (int i = 0; i < notiJSON.length(); i++) {
-                    String notiJ = notiJSON.optString(i);
-                    getNoti.add(notiJ);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        // RecyclerView.
-        plantList = (RecyclerView) findViewById(R.id.plantList);
-        mArrayList = new ArrayList<>();
-        linearLayoutManager = new LinearLayoutManager(this);
-        plantList.setLayoutManager(linearLayoutManager);
-        plantListAdapter = new PlantListAdapter(mArrayList);
-        plantList.setAdapter(plantListAdapter);
-        plantList.addItemDecoration(new RecyclerViewDecoration(15)); // 세로 간격.
-        mItemTouchHelper = new ItemTouchHelper(new PlantItemTouchHelperCallback(plantListAdapter));
-        mItemTouchHelper.attachToRecyclerView(plantList);
-
-        for (int i = 0; i < getModel.size(); i++) {
-            PlantListItem item = new PlantListItem(getName.get(i), getModel.get(i), R.drawable.home_info, R.drawable.home_edit);
-            mArrayList.add(item);
-            plantListAdapter.notifyItemInserted(mArrayList.size());
-        }
-
-        plantListAdapter.setOnItemClickListener(new PlantListAdapter.OnItemClickEventListener() {
+        settingBTN = (Button) findViewById(R.id.settingBTN);
+        settingBTN.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemClick(View view, int position) {
-                int status = NetworkStatus.getConnectivityStatus(getApplicationContext());
-                if (status == NetworkStatus.TYPE_NOT_CONNECTED) {
-                    toastShow("데이터 연결을 해주세요");
-                } else {
-                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                    intent.putExtra("model", getModel.get(position));
-                    intent.putExtra("name", getName.get(position));
-                    startActivity(intent);
-                }
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), InformSetting.class);
+                intent.putExtra("id", id);
+                startActivity(intent);
             }
         });
+
     }
 
-    // 메뉴에서 선택 후 돌아올 때.
-    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1) {
+        if (requestCode == 1) { // 모델 이름 변경 후.
             if (resultCode == RESULT_OK) {
-                String model = data.getStringExtra("model");
-                int cnt = 0;
-                for (int i = 0; i < getModel.size(); i++) {
-                    if (model.equals(getModel.get(i))) {
-                        cnt++;
-                    }
-                }
-                if (cnt > 0) { // 중복된 경우.
-                    toast = Toast.makeText(getApplicationContext(), "이미 추가된 모델입니다", Toast.LENGTH_SHORT);
-                    toast.cancel();
-                    toast.show();
-                } else {
-                    PlantListItem item = new PlantListItem(model, model, R.drawable.home_info, R.drawable.home_edit);
-                    mArrayList.add(item);
-                    plantListAdapter.notifyItemInserted(mArrayList.size());
-
-                    modelJSON.put(model);
-                    getModel.add(model);
-                    nameJSON.put(model);
-                    getName.add(model);
-                    notiJSON.put("0");
-                    getNoti.add("0");
-
-                    editor.putString("model", modelJSON.toString());
-                    editor.putString("name", nameJSON.toString());
-                    editor.putString("noti", notiJSON.toString());
-                    editor.commit();
-                }
-            }
-        }
-
-        if (requestCode == 2) {
-            if (resultCode == RESULT_OK) {
-                String modelRevise = data.getStringExtra("modelR");
-                int listPosition = data.getIntExtra("position", 0);
-                mArrayList.set(listPosition, new PlantListItem(modelRevise, getModel.get(listPosition), R.drawable.home_info, R.drawable.home_edit));
-                plantListAdapter.notifyItemChanged(listPosition);
-
-                try {
-                    nameJSON.put(listPosition, modelRevise);
-                    getName.set(listPosition, modelRevise);
-                    editor.putString("name", nameJSON.toString());
-                    editor.commit();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                reLoad();
             }
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public void changeNameModel(int from_position, int to_position) throws JSONException {
-        String fromName = getName.get(from_position);
-        String fromModel = getModel.get(from_position);
-        String toName = getName.get(to_position);
-        String toModel = getModel.get(to_position);
-        String fromNoti = getNoti.get(from_position);
-        String toNoti = getNoti.get(to_position);
-
-        getName.set(from_position, toName);
-        getName.set(to_position, fromName);
-        getModel.set(from_position, toModel);
-        getModel.set(to_position, fromModel);
-        getNoti.set(from_position, toNoti);
-        getNoti.set(to_position, fromNoti);
-
-        nameJSON.put(to_position, fromName);
-        nameJSON.put(from_position, toName);
-        modelJSON.put(to_position, fromModel);
-        modelJSON.put(from_position, toModel);
-        notiJSON.put(to_position, fromNoti);
-        notiJSON.put(from_position, toNoti);
-
-        editor.putString("name", nameJSON.toString());
-        editor.putString("model", modelJSON.toString());
-        editor.putString("noti", notiJSON.toString());
-        editor.commit();
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public void removeNameModel(int position) {
-        getName.remove(position);
-        getModel.remove(position);
-        getNoti.remove(position);
-        modelJSON.remove(position);
-        nameJSON.remove(position);
-        notiJSON.remove(position);
-
-        editor.putString("name", nameJSON.toString());
-        editor.putString("model", modelJSON.toString());
-        editor.putString("noti", notiJSON.toString());
-        editor.commit();
-    }
-    public class RecyclerViewDecoration extends RecyclerView.ItemDecoration {
-
-        private final int divHeight;
-
-        public RecyclerViewDecoration(int divHeight)
-        {
-            this.divHeight = divHeight;
-        }
-
+    // 식물재배기 리스트 중 Item 클릭 시.
+    public class plantListItemClickListener implements AdapterView.OnItemClickListener {
         @Override
-        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state)
-        {
-            super.getItemOffsets(outRect, view, parent, state);
-            outRect.top = divHeight;
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            final String name = plantListItems.get(position).getName(); // get name
+            final String model = plantListItems.get(position).getModel(); // get model
+            boolean flag = true;
+
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            intent.putExtra("model", model);
+            intent.putExtra("name", name);
+            startActivity(intent);
         }
     }
+
+    // 리스트 정보 얻어오기.
+    class GetList extends AsyncTask<String, Integer, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            StringBuilder jsonHtml = new StringBuilder();
+
+            String serverURL = (String) params[0];
+            String postParameters = "id=" + id;
+
+            try {
+                URL phpUrl = new URL(params[0]);
+                HttpURLConnection conn = (HttpURLConnection) phpUrl.openConnection();
+
+                if (conn != null) {
+                    conn.setConnectTimeout(10000);
+                    conn.setReadTimeout(5000);
+                    conn.setRequestMethod("POST");
+                    conn.connect();
+
+                    OutputStream outputStream = conn.getOutputStream();
+                    outputStream.write(postParameters.getBytes("UTF-8"));
+                    outputStream.flush();
+                    outputStream.close();
+
+                    if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                        BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+
+                        while (true) {
+                            String line = br.readLine();
+                            if (line == null)
+                                break;
+                            jsonHtml.append(line + "\n");
+                        }
+                        br.close();
+                    }
+                    conn.disconnect();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return jsonHtml.toString();
+        }
+
+        protected void onPostExecute(String str) {
+            String TAG_JSON = "aj3dlab";
+            String model = "", name = "";
+            try {
+                JSONObject jsonObject = new JSONObject(str);
+                JSONArray jsonArray = jsonObject.getJSONArray(TAG_JSON);
+
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject item = jsonArray.getJSONObject(i);
+
+                    model = item.getString("model");
+                    name = item.getString("name");
+
+                    plantListItems.add(new PlantListItem(name, model, R.drawable.home_info, R.drawable.home_edit));
+                    plantListAdapter.notifyDataSetChanged();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    // 새로고침.
+    public void reLoad() {
+        finish();//인텐트 종료
+        overridePendingTransition(0, 0);//인텐트 효과 없애기
+        Intent intent = getIntent(); //인텐트
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        startActivity(intent); //액티비티 열기
+    }
+
     public void toastShow(String msg) {
         if (toast == null) {
             toast = Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT);

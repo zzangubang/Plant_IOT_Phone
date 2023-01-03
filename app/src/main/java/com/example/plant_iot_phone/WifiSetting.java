@@ -9,7 +9,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
@@ -425,6 +424,9 @@ public class WifiSetting extends AppCompatActivity {
                         timer.cancel();
                         deviceState = "on";
                         arduinoStateT.setText("READY");
+                    }
+                    if(value[1].trim().equals("CHANGE")) {
+                        toastShow("입력되었습니다.");
                     }
                 }
             }

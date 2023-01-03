@@ -18,9 +18,6 @@ public class ForcedTerminationService extends Service {
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         Log.e("Error", "onTaskRemoved - 강제 종료" + rootIntent);
-        Intent intent = new Intent(getApplicationContext(), MyService.class);
-        startService(intent);
-        stopSelf();
     }
 
     @Override

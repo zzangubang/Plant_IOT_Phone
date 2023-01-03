@@ -39,10 +39,13 @@ public class MyService extends Service {
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     ArrayList<String> getModel, getName, getNoti;
-    JSONArray modelJSON, nameJSON, notiJSON;
 
     GetValue gValue;
+    GetList gList;
     String getValueURL = "http://aj3dlab.dothome.co.kr/Plant_value_Android.php";
+    String getListURL = "http://aj3dlab.dothome.co.kr/Plant_plantlistG_Android.php";
+
+    String id = "";
 
     Timer timer;
     public static Context mContext;
@@ -60,7 +63,7 @@ public class MyService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         // 포그라운드 실행. (알림 띄우기)
         createNotificationChannel();
-        Intent notificationIntent = new Intent(this, HomeActivity.class);
+        Intent notificationIntent = new Intent(this, LoginActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_MUTABLE);
         Notification notification = new NotificationCompat.Builder(this, PRIMARY_CHANNEL_ID)
                 .setContentTitle("AJPLANTs")
@@ -71,64 +74,30 @@ public class MyService extends Service {
 
         startForeground(1, notification);
 
+        sharedPreferences = getSharedPreferences("PlantUser", MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+        id = sharedPreferences.getString("id", "");
+
+        getModel = new ArrayList<String>();
+        getName = new ArrayList<String>();
+        getNoti = new ArrayList<String>();
+
+        gList = new GetList();
+        gList.execute(getListURL); // 리스트 얻어오기.
+
+
         // 수위 알림 띄우기.
         timer = new Timer();
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                sharedPreferences = getSharedPreferences("PlantInform", MODE_MULTI_PROCESS); // 문제 가능성 있음.
-                editor = sharedPreferences.edit();
-                getModel = new ArrayList<String>();
-                getName = new ArrayList<String>();
-                getNoti = new ArrayList<String>();
-                modelJSON = new JSONArray();
-                nameJSON = new JSONArray();
-                notiJSON = new JSONArray();
-
-                String jsonModel = sharedPreferences.getString("model", null);
-                if (jsonModel != null) {
-                    try {
-                        modelJSON = new JSONArray(jsonModel);
-                        for (int i = 0; i < modelJSON.length(); i++) {
-                            String modelJ = modelJSON.optString(i);
-                            getModel.add(modelJ);
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-                String jsonName = sharedPreferences.getString("name", null);
-                if (jsonName != null) {
-                    try {
-                        nameJSON = new JSONArray(jsonName);
-                        for (int i = 0; i < nameJSON.length(); i++) {
-                            String nameJ = nameJSON.optString(i);
-                            getName.add(nameJ);
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-                String jsonNoti = sharedPreferences.getString("noti", null);
-                if (jsonNoti != null) {
-                    try {
-                        notiJSON = new JSONArray(jsonNoti);
-                        for (int i = 0; i < notiJSON.length(); i++) {
-                            String notiJ = notiJSON.optString(i);
-                            getNoti.add(notiJ);
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                for (int i = 0; i < getModel.size(); i++) {
+                for(int i=0; i<getModel.size(); i++) { // 리스트 수만큼 현재 수위상태 읽어오기.
                     gValue = new GetValue();
                     gValue.execute(getValueURL, getModel.get(i), getName.get(i), getNoti.get(i), String.valueOf(i));
                 }
             }
         };
-        timer.schedule(task, 1000, 25000); //25초마다 실행
+        timer.schedule(task, 0, 25000); //25초마다 실행
 
         return START_STICKY;
     }
@@ -165,19 +134,82 @@ public class MyService extends Service {
         manager.notify(position + 2, builder.build());
     }
 
+    // 리스트 정보 얻어오기.
+    class GetList extends AsyncTask<String, Integer, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            StringBuilder jsonHtml = new StringBuilder();
+
+            String serverURL = (String) params[0];
+            String postParameters = "id=" + id;
+
+            try {
+                URL phpUrl = new URL(params[0]);
+                HttpURLConnection conn = (HttpURLConnection) phpUrl.openConnection();
+
+                if (conn != null) {
+                    conn.setConnectTimeout(10000);
+                    conn.setReadTimeout(5000);
+                    conn.setRequestMethod("POST");
+                    conn.connect();
+
+                    OutputStream outputStream = conn.getOutputStream();
+                    outputStream.write(postParameters.getBytes("UTF-8"));
+                    outputStream.flush();
+                    outputStream.close();
+
+                    if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                        BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+
+                        while (true) {
+                            String line = br.readLine();
+                            if (line == null)
+                                break;
+                            jsonHtml.append(line + "\n");
+                        }
+                        br.close();
+                    }
+                    conn.disconnect();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return jsonHtml.toString();
+        }
+
+        protected void onPostExecute(String str) {
+            String TAG_JSON = "aj3dlab";
+            String model = "", name = "";
+            try {
+                JSONObject jsonObject = new JSONObject(str);
+                JSONArray jsonArray = jsonObject.getJSONArray(TAG_JSON);
+
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject item = jsonArray.getJSONObject(i);
+
+                    model = item.getString("model");
+                    name = item.getString("name");
+
+                    getModel.add(model);
+                    getName.add(name);
+                    getNoti.add("0");
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     // 현재 상태 읽어오기.
     class GetValue extends AsyncTask<String, Integer, String> {
-        String model, name, noti;
-        int position;
-
+        String model, name, noti, position;
         @Override
         protected String doInBackground(String... params) {
             StringBuilder jsonHtml = new StringBuilder();
             model = params[1];
             name = params[2];
             noti = params[3];
-            position = Integer.valueOf((String) params[4]);
+            position = params[4];
 
             String serverURL = (String) params[0];
             String postParameters = "model=" + model;
@@ -218,29 +250,27 @@ public class MyService extends Service {
 
         protected void onPostExecute(String str) {
             String TAG_JSON = "aj3dlab";
-            String levelD = "";
+            String level = "";
             try {
                 JSONObject jsonObject = new JSONObject(str);
                 JSONArray jsonArray = jsonObject.getJSONArray(TAG_JSON);
 
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject item = jsonArray.getJSONObject(i);
-                    levelD = item.getString("level");
+
+                    level = item.getString("level");
                 }
 
-                if (levelD.equals("EMPTY")) {
-                    if (noti.equals("0")) {
-                        sendNotification(model, name, position);
-                        getNoti.set(position, "1");
-                        notiJSON.put(position, "1");
-                        editor.putString("noti", notiJSON.toString());
-                        editor.commit();
+                //sendNotification(model, name, Integer.valueOf(position));
+
+                if(level.equals("EMPTY")) {
+                    if(noti.equals("0")) {
+                        sendNotification(model, name, Integer.valueOf(position));
+                        getNoti.set(Integer.valueOf(position), "1");
                     }
-                } else {
-                    getNoti.set(position, "0");
-                    notiJSON.put(position, "0");
-                    editor.putString("noti", notiJSON.toString());
-                    editor.commit();
+                }
+                else {
+                    getNoti.set(Integer.valueOf(position), "0");
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

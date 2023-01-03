@@ -61,16 +61,15 @@
                 android:background="@drawable/home_layout"
                 android:orientation="vertical">
 
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="9"
-                    android:orientation="horizontal">
+                    android:layout_weight="9">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
+                        android:layout_centerVertical="true"
                         android:layout_marginLeft="@dimen/size_20dp"
                         android:text="식물재배기 목록"
                         android:textColor="#000000"
@@ -78,15 +77,25 @@
                         android:fontFamily="@font/main_font"/>
 
                     <android.widget.Button
-                        android:id="@+id/addList"
+                        android:id="@+id/settingBTN"
                         android:layout_width="@dimen/size_25dp"
                         android:layout_height="@dimen/size_25dp"
-                        android:layout_marginLeft="@dimen/size_5dp"
-                        android:layout_gravity="center_vertical"
-                        android:background="@drawable/home_add"/>
+                        android:layout_marginRight="@dimen/size_7dp"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/login_setting"
+                        android:layout_toLeftOf="@+id/logoutBTN"/>
 
+                    <android.widget.Button
+                        android:id="@+id/logoutBTN"
+                        android:layout_width="@dimen/size_25dp"
+                        android:layout_height="@dimen/size_25dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginRight="@dimen/size_20dp"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/home_logout"/>
 
-                </LinearLayout>
+                </RelativeLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -94,13 +103,13 @@
                     android:layout_margin="@dimen/size_15dp"
                     android:layout_weight="1">
 
-                    <androidx.recyclerview.widget.RecyclerView
+                    <ListView
                         android:id="@+id/plantList"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:scrollbars="none"
                         android:dividerHeight="@dimen/size_10dp"
-                        android:divider="#000000"/>
+                        android:divider="#ffffff"/>
                 </LinearLayout>
 
             </LinearLayout>

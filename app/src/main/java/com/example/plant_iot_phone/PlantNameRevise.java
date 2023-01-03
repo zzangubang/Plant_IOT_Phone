@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -12,6 +13,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Objects;
 
 public class PlantNameRevise extends Activity {
@@ -20,7 +30,9 @@ public class PlantNameRevise extends Activity {
 
     Button cancelBTN, applyBTN;
 
-    String name = "";
+    String name = "", model = "";
+    String reNameURL = "http://aj3dlab.dothome.co.kr/Plant_nameRe_Android.php";
+    ReName rName;
     Toast toast;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +43,8 @@ public class PlantNameRevise extends Activity {
         Objects.requireNonNull(getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         Intent getIntent = getIntent();
-        int position = getIntent.getIntExtra("position", 0);
         name = getIntent.getStringExtra("name");
+        model = getIntent.getStringExtra("model");
 
         nameEdit = (EditText) findViewById(R.id.nameEdit);
         nameEdit.setText(name);
@@ -60,15 +72,73 @@ public class PlantNameRevise extends Activity {
                     toastShow("이름을 입력해주세요");
                 }
                 else {
+                    rName = new ReName();
+                    rName.execute(reNameURL);
                     Intent intent = new Intent();
-                    intent.putExtra("modelR", name);
-                    intent.putExtra("position", position);
                     setResult(RESULT_OK, intent);
                     finish();
                 }
             }
         });
 
+    }
+    // 이름 변경.
+    class ReName extends AsyncTask<String, Integer, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            StringBuilder jsonHtml = new StringBuilder();
+
+            String serverURL = (String) params[0];
+            String postParameters = "model=" + model + "&name=" + name;
+
+            try {
+                URL phpUrl = new URL(params[0]);
+                HttpURLConnection conn = (HttpURLConnection) phpUrl.openConnection();
+
+                if (conn != null) {
+                    conn.setConnectTimeout(10000);
+                    conn.setReadTimeout(5000);
+                    conn.setRequestMethod("POST");
+                    conn.connect();
+
+                    OutputStream outputStream = conn.getOutputStream();
+                    outputStream.write(postParameters.getBytes("UTF-8"));
+                    outputStream.flush();
+                    outputStream.close();
+
+                    if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                        BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+
+                        while (true) {
+                            String line = br.readLine();
+                            if (line == null)
+                                break;
+                            jsonHtml.append(line + "\n");
+                        }
+                        br.close();
+                    }
+                    conn.disconnect();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return jsonHtml.toString();
+        }
+
+        protected void onPostExecute(String str) {
+            String TAG_JSON = "aj3dlab";
+            String model = "", name = "";
+            try {
+                JSONObject jsonObject = new JSONObject(str);
+                JSONArray jsonArray = jsonObject.getJSONArray(TAG_JSON);
+
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject item = jsonArray.getJSONObject(i);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void toastShow(String msg) {

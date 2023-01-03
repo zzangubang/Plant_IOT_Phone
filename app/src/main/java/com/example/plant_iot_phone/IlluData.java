@@ -1,6 +1,7 @@
 package com.example.plant_iot_phone;
 
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -55,6 +56,7 @@ public class IlluData extends Fragment {
     String getValueTableDURL = "http://aj3dlab.dothome.co.kr/Plant_valueTableD_Android.php";
     GetValueTableD gValueTD;
 
+    ProgressDialog dialog;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -105,6 +107,10 @@ public class IlluData extends Fragment {
 
 
         model = ((Data)getActivity()).model;
+        // 로딩창.
+        dialog = new ProgressDialog(getContext());
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        dialog.setMessage("데이터 조회중입니다.\n잠시만 기다려주세요.");
 
         dataFirst = (TextView) v.findViewById(R.id.dataFirst);
         dataLast = (TextView) v.findViewById(R.id.dataLast);
@@ -116,6 +122,7 @@ public class IlluData extends Fragment {
                 dataDate.setText(lastDate);
                 gValueT = new GetValueTable();
                 gValueT.execute(getValueTableURL, lastDate);
+                dialog.show();
                 illuGraph.loadUrl("http://aj3dlab.dothome.co.kr/Plant_illuGraph.php?model=" + model + "&date=" + lastDate);
             }
         });
@@ -137,6 +144,7 @@ public class IlluData extends Fragment {
 
                 gValueT = new GetValueTable(); // 선택한 날짜의 데이터 구하기.
                 gValueT.execute(getValueTableURL, selectDate);
+                dialog.show();
                 dataDate.setText(selectDate);
                 illuGraph.loadUrl("http://aj3dlab.dothome.co.kr/Plant_illuGraph.php?model=" + model + "&date=" + selectDate);
             }
@@ -264,6 +272,8 @@ public class IlluData extends Fragment {
                     illuTable.addView(tableRow);
                 }
 
+                dialog.dismiss();
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -315,7 +325,7 @@ public class IlluData extends Fragment {
 
         protected void onPostExecute(String str) {
             String TAG_JSON = "aj3dlab";
-            String date = "";
+            String date = "", dateL = "";
 
             try {
                 JSONObject jsonObject = new JSONObject(str);
@@ -329,16 +339,18 @@ public class IlluData extends Fragment {
                     if(i == 0) {
                         lastDate = date;
                         dataLast.setText(date);
-                        gValueT = new GetValueTable();
-                        gValueT.execute(getValueTableURL, date);
-                        dataDate.setText(date);
-                        illuGraph.loadUrl("http://aj3dlab.dothome.co.kr/Plant_illuGraph.php?model=" + model + "&date=" + date);
+                        dateL = date;
                     }
                     else {
                         firstDate = date;
                         dataFirst.setText(date);
                     }
                 }
+                illuGraph.loadUrl("http://aj3dlab.dothome.co.kr/Plant_illuGraph.php?model=" + model + "&date=" + dateL);
+                gValueT = new GetValueTable();
+                gValueT.execute(getValueTableURL, dateL);
+                dialog.show();
+                dataDate.setText(dateL);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

@@ -81,8 +81,6 @@ public class MainActivity extends AppCompatActivity {
         homeBTN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-                startActivity(intent);
                 finish();
             }
         });
@@ -692,8 +690,6 @@ public class MainActivity extends AppCompatActivity {
     // 뒤로가기.
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-        startActivity(intent);
         finish();
     }
 }
