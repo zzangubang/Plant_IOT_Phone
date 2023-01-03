@@ -426,7 +426,7 @@ public class WifiSetting extends AppCompatActivity {
                         arduinoStateT.setText("READY");
                     }
                     if(value[1].trim().equals("CHANGE")) {
-                        toastShow("입력되었습니다.");
+                        toastShow("설정 완료 되었습니다.");
                     }
                 }
             }
