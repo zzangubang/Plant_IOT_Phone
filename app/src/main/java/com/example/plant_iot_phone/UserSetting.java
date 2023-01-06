@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -52,12 +53,19 @@ public class UserSetting extends AppCompatActivity {
     GetAuto gAuto;
     String sendAutoURL = "http://aj3dlab.dothome.co.kr/Plant_autoS_Android.php";
     SendAuto sAuto;
+
     Toast toast;
+    ProgressDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_setting);
+
+        // 로딩창.
+        dialog = new ProgressDialog(this);
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        dialog.setMessage("불러오는 중입니다.\n잠시만 기다려주세요.");
 
         Intent getIntent = getIntent();
         model = getIntent.getStringExtra("model");
@@ -341,7 +349,10 @@ public class UserSetting extends AppCompatActivity {
 
         gAuto = new GetAuto();
         gAuto.execute(getAutoURL);
+        dialog.show();
 
+    }
+    void showFragment() {
         new Handler().postDelayed(new Runnable()
         {
             @RequiresApi(api = Build.VERSION_CODES.O)
@@ -351,8 +362,7 @@ public class UserSetting extends AppCompatActivity {
                 transaction = fragmentManager.beginTransaction();
                 transaction.replace(R.id.setFrame, TempSetting).commitAllowingStateLoss();
             }
-        }, 300);// 0.3초 정도 딜레이를 준 후 시작
-
+        }, 200);// 0.6초 정도 딜레이를 준 후 시작
     }
 
     // 이전 자동 모드일 때의 사용자 값 가져오기.
@@ -445,7 +455,8 @@ public class UserSetting extends AppCompatActivity {
                 ledRSM = Integer.valueOf(ledRS[1])/10;
 
                 autoValue.setText(String.valueOf(tempMin) + " ~ " + String.valueOf(tempMax) + "°C");
-
+                dialog.dismiss();
+                showFragment();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
