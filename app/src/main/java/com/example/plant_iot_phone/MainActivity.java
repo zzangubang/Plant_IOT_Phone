@@ -396,7 +396,7 @@ public class MainActivity extends AppCompatActivity {
                     case "auto":
                         Intent intentA = new Intent(getApplicationContext(), UserSetting.class);
                         intentA.putExtra("model", model);
-                        startActivity(intentA);
+                        startActivityForResult(intentA, 2);
                         break;
                     case "wifi":
                         Intent intentW = new Intent(getApplicationContext(), WifiSetting.class);
