@@ -26,6 +26,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -341,51 +342,23 @@ public class WifiSetting extends AppCompatActivity {
         public void run() {
             byte[] buffer = new byte[1024];  // buffer store for the stream
             int bytes; // bytes returned from read()
-            int readBufferPosition = 0;
-            // Keep listening to the InputStream until an exception occurs
             while (true) {
                 try {
-                    // Read from the InputStream
                     bytes = mmInStream.available();
-                    buffer = null;
                     if (bytes != 0) {
-                        buffer = new byte[bytes];
-                        mmInStream.read(buffer);
-                        for (int i = 0; i < bytes; i++) {
-                            byte tempByte = buffer[i];
-                            if (33 > tempByte || tempByte > 126) {
-                                byte[] encodedBytes = new byte[readBufferPosition];
-                                System.arraycopy(buffer, 0, encodedBytes, 0, encodedBytes.length);
-                                final String text = new String(encodedBytes, "US-ASCII");
-                                readBufferPosition = 0;
-                                postToastMessage(text);
-                                break;
-                            } else {
-                                if (tempByte == 0) {
-                                    break;
-                                }
-                                buffer[readBufferPosition] = tempByte;
-                                //testByte = tempByte;
-                                readBufferPosition += 1;
-                            }
-                        }
+                        SystemClock.sleep(100);
+                        bytes = mmInStream.available();
+                        bytes = mmInStream.read(buffer, 0, bytes);
+
+                        final String text = new String(buffer, "US-ASCII");
+                        postToastMessage(text);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (ArrayIndexOutOfBoundsException e) {
                     e.printStackTrace();
-                    Handler handler = new Handler(Looper.getMainLooper());
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            toastShow("ArrayIndexOutOfBoundsException");
-                        }
-                    }, 0);
-                }
-                try {
-                    Thread.sleep(1500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    toastShow("ArrayIndex 오류가 발생하였습니다. 잠시후 다시 시도해주세요.");
+                    Log.e("WIFI:OK", "ArrayIndex 오류");
                 }
             }
         }
@@ -417,6 +390,8 @@ public class WifiSetting extends AppCompatActivity {
             @Override
             public void run() {
                 String[] value = message.split(":");
+
+                toastShow(message); // 아두이노에서 받는 메세지 확인용.
 
                 // OK: 받을 준비
                 if (value[0].equals("WIFI")) {
@@ -534,7 +509,7 @@ public class WifiSetting extends AppCompatActivity {
                 String wifiN = data.getStringExtra("wifiName");
                 String wifiP = data.getStringExtra("wifiPass");
                 String sendCommand = wifiN + ":" + wifiP;
-                connectThread.write("WIFI:INFO:" + sendCommand + "\r\n");
+                connectThread.write("WIFI:INFO:" + sendCommand + "\n");
             }
         }
     }

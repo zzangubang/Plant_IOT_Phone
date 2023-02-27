@@ -121,26 +121,32 @@
                             android:layout_width="@dimen/size_70dp"
                             android:layout_height="@dimen/size_70dp"
                             android:background="@drawable/main_value_selector">
+
                             <TextView
                                 android:id="@+id/errTemp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_margin="@dimen/size_5dp"
+                                android:layout_marginStart="@dimen/size_5dp"
+                                android:layout_marginLeft="@dimen/size_5dp"
+                                android:layout_marginTop="@dimen/size_5dp"
+                                android:layout_marginEnd="@dimen/size_5dp"
+                                android:layout_marginRight="@dimen/size_5dp"
+                                android:layout_marginBottom="@dimen/size_5dp"
+                                android:fontFamily="@font/main_font"
                                 android:text="e(U)"
-                                android:textSize="@dimen/size_7dp"
                                 android:textColor="#000000"
-                                android:fontFamily="@font/main_font"/>
+                                android:textSize="@dimen/size_7dp" />
 
                             <TextView
                                 android:id="@+id/tempValue"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_centerInParent="true"
+                                android:fontFamily="@font/num_font"
                                 android:text=""
-                                android:textSize="@dimen/size_13dp"
                                 android:textColor="#000000"
-                                android:textStyle="bold"
-                                android:fontFamily="@font/num_font"/>
+                                android:textSize="@dimen/size_13dp"
+                                android:textStyle="bold" />
                         </RelativeLayout>
                     </LinearLayout>
                     <LinearLayout

@@ -2,6 +2,7 @@ package com.example.plant_iot_phone;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.core.R;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
@@ -376,7 +377,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         timer = new Timer();
-        timer.schedule(task, 25000, 25000); //25초마다 실행
+        timer.schedule(task, 10000, 10000); //25 -> 10초마다 실행
     }
 
     // 메뉴에서 선택 후 돌아올 때.
